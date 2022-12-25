@@ -10,13 +10,14 @@ const handleRefreshToken = async (req, res) => {
     const refreshToken = cookies.jwt;
 
     let foundUser = false;
-    let username;
+    let username, role;
 
-    await pool.query(`SELECT username FROM users WHERE refresh_token = '${refreshToken}'`)
+    await pool.query(`SELECT username, role FROM users WHERE refresh_token = '${refreshToken}'`)
         .then(data => {
             if (data[0].length > 0) {
                 foundUser = true;
                 username = data[0][0].username;
+                role = data[0][0].role
             }
         })
         .catch(error => {
@@ -33,7 +34,12 @@ const handleRefreshToken = async (req, res) => {
         (error, decoded) => {
             if (error || username !== decoded.username) return res.sendStatus(403);
             const accessToken = jwt.sign(
-                { "username": decoded.username },  
+                { 
+                    "UserInfo": {
+                        "username": decoded.username,
+                        "role": role
+                    }  
+                },  
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "30s" }
             );

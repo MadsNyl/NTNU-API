@@ -23,14 +23,14 @@ const handleLogout = async (req, res) => {
         });
     
     if (!foundUser) {
-        res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true }); 
+        res.clearCookie("jwt", { httpOnly: true }); 
         return res.sendStatus(204);
     }
 
     // delete refresh token for user
-    await pool.query(`UPDATE users SET refresh_token = '${refreshToken}' WHERE username = '${username}'`)
+    await pool.query(`UPDATE users SET refresh_token = '' WHERE username = '${username}'`)
         .then(data => {
-            res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true }); 
+            res.clearCookie("jwt", { httpOnly: true }); 
             return res.sendStatus(204);
         })
         .catch(error => {

@@ -9,13 +9,14 @@ const handleLogin = async (req, res) => {
     if (!username || !password) return res.status(400).json({ "message": "Username and password are required." });
 
     let foundUser = false;
-    let pwd, match;
+    let pwd, match, role;
 
-    await pool.query(`SELECT username, password FROM users WHERE username = '${username}'`)
+    await pool.query(`SELECT username, password, role FROM users WHERE username = '${username}'`)
         .then(data => {
             if (data[0].length > 0) {
                 foundUser = true;
                 pwd = data[0][0].password;
+                role = data[0][0].role;
             }
         })
         .catch(error => {
@@ -32,7 +33,12 @@ const handleLogin = async (req, res) => {
     if (match) {
         // create JWTs
         const accessToken = jwt.sign(
-            { "username": username },
+            { 
+                "UserInfo": {
+                    "username": username,
+                    "role": role
+                }
+            },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "60s" }
         );
@@ -46,7 +52,7 @@ const handleLogin = async (req, res) => {
         // update user with access token
         await pool.query(`UPDATE users SET refresh_token = '${refreshToken}' WHERE username = '${username}'`)
             .then(data => {
-                res.cookie("jwt", refreshToken, { httpOnly: true, sameSite: "None", secure: true, maxAge: 24 * 60 * 60 * 1000 });
+                res.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
                 return res.status(200).json({ accessToken });
             })
             .catch(error => {

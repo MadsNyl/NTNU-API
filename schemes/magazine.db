@@ -1,0 +1,12 @@
+CREATE TABLE magazine(
+    id int AUTO_INCREMENT,
+    title varchar(255),
+    size int,
+    logo varchar(255),
+    pdf varchar(255),
+    publish_date datetime DEFAULT NOW(),
+    updated_date datetime DEFAULT null,
+    site_id int,
+    PRIMARY KEY(id),
+    FOREIGN KEY(site_id) REFERENCES ON site(id)
+);

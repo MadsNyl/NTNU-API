@@ -2,11 +2,10 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const verifyJWT = (req, res, next) => {
-    const authHeader = req.headers["authorization"];
+    const authHeader = req.headers.authorization;
 
-    if (!authHeader) return res.sendStatus(401);
+    if (!authHeader?.startsWith("Bearer ")) return res.sendStatus(401);
 
-    console.log(authHeader);
     const token = authHeader.split(" ")[1];
 
     jwt.verify(
@@ -14,7 +13,8 @@ const verifyJWT = (req, res, next) => {
         process.env.ACCESS_TOKEN_SECRET,
         (error, decoded) => {
             if (error) return res.sendStatus(403);
-            req.username = decoded.username;
+            req.username = decoded.UserInfo.username;
+            req.role = decoded.UserInfo.role;
             next();
         }
     );  

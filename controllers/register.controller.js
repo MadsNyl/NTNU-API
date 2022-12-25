@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const { pool } = require("../connection.js");
 
 const handleNewUser = async (req, res) => {
-    const { username, password, repeatedPassword } = req.body;
+    const { username, password, repeatedPassword, role } = req.body;
 
     if (!username || !password || !repeatedPassword) return res.status(400).json({ "message": "Username and password are required." });
 
@@ -28,8 +28,8 @@ const handleNewUser = async (req, res) => {
     // encrypt password
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        // store new user
-        await pool.query(`INSERT INTO users (username, password) VALUES ('${username}', '${hashedPassword}')`)
+        // store new user with role
+        await pool.query(`INSERT INTO users (username, password, role) VALUES ('${username}', '${hashedPassword}', ${role})`)
             .then(data => {
                 console.log("inserting");
                 return res.status(201).json({ "message": `User ${username} succesfully created.` });

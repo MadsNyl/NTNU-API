@@ -1,0 +1,7 @@
+CREATE TABLE user_site(
+    user_id int,
+    site_id int,
+    PRIMARY KEY(user_id, site_id),
+    FOREIGN KEY(user_id) REFERENCES user(id), 
+    FOREIGN KEY(site_id) REFERENCES site(id)
+);
