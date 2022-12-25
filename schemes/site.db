@@ -1,8 +1,7 @@
 CREATE TABLE site(
-    id int AUTO_INCREMENT,
     title varchar(255),
     name varchar(255),
-    logo varchar(255),
+    logo varchar(255) DEFAULT null,
     description text,
-    PRIMARY KEY(id)
+    PRIMARY KEY(title)
 );
