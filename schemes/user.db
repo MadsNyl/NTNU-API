@@ -2,5 +2,6 @@ CREATE TABLE users(
     id int AUTO_INCREMENT,
     username varchar(255),
     password varchar(255),
+    refresh_token varchar(255) DEFAULT null,
     PRIMARY KEY(id)
 );
