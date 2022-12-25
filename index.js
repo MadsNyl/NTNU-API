@@ -7,13 +7,16 @@ const logoutRouter = require("./routes/logout.route.js");
 const siteRouter = require("./routes/site.route.js");
 const adminRouter = require("./routes/admin.route.js");
 const cookieParser = require("cookie-parser");
+const corsOptions = require("./config/corsOptions.js");
+const credentials = require("./middleware/credentials.js");
 
 const app = express();
 
 // middleware
-app.use(cors());
-app.use(express.json());
+app.use(credentials);
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cookieParser());
 
 // routes

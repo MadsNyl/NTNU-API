@@ -52,8 +52,8 @@ const handleLogin = async (req, res) => {
         // update user with access token
         await pool.query(`UPDATE users SET refresh_token = '${refreshToken}' WHERE username = '${username}'`)
             .then(data => {
-                res.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-                return res.status(200).json({ accessToken });
+                res.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, siteName: "None", secure: true });
+                return res.status(200).json({ accessToken, role });
             })
             .catch(error => {
                 console.log(error);
