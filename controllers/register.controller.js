@@ -10,6 +10,7 @@ const handleNewUser = async (req, res) => {
 
     let duplicate = false;
 
+
     // check for duplicate user
     await pool.query(`SELECT username FROM users WHERE username = '${username}'`)
         .then(data => {

@@ -8,6 +8,7 @@ const ROLES = require("../config/rolesList.js");
 router.use(verifyJWT);
 
 router
-    .get("/users", verifyRole(ROLES.Admin), adminController.getAllUsers);
+    .get("/users", verifyRole(ROLES.Admin), adminController.getAllUsers)
+    .get("/users/:id", verifyRole(ROLES.Admin), adminController.getUser);
 
 module.exports = router;

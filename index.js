@@ -15,6 +15,9 @@ const app = express();
 // middleware
 app.use(credentials);
 app.use(cors(corsOptions));
+app.options('/*', (_, res) => {
+    res.sendStatus(200);
+});
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
