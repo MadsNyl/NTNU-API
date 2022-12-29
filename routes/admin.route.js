@@ -9,6 +9,7 @@ router.use(verifyJWT);
 
 router
     .get("/users", verifyRole(ROLES.Admin), adminController.getAllUsers)
-    .get("/users/:id", verifyRole(ROLES.Admin), adminController.getUser);
+    .get("/users/:id", verifyRole(ROLES.Admin), adminController.getUser)
+    .delete("/users/delete", verifyRole(ROLES.Admin), adminController.deleteUser);
 
 module.exports = router;

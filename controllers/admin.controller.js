@@ -43,10 +43,48 @@ const getUser = async (req, res) => {
 // edit role of user
 
 // delete user
+const deleteUser = async (req, res) => {
+    let hit;
+
+    // check if user is connected to site, and delete
+    await pool.query(`SELECT user_site.user_id FROM user_site WHERE user_site.user_id = ${req.body.user_id}`)
+        .then(data => {
+            if (data[0].length > 0) return hit = true;
+            return hit = false;
+        })
+        .catch(error => {
+            console.log(error);
+            return res.sendStatus(500);
+        });
+    
+    if (hit) {
+    // delete user connection with site
+    await pool.query(`DELETE FROM user_site WHERE user_site.user_id = ${req.body.user_id}`)
+        .then(data => {
+            return
+        })
+        .catch(error => {
+            console.log(error);
+            return res.sendStatus(500);
+        });
+    }
+    
+    // delete user
+    await pool.query(`DELETE FROM users WHERE id = ${req.body.user_id}`)
+        .then(data => {
+            return res.send(data[0]);
+        })
+        .catch(error => {
+            console.log(error);
+            return res.sendStatus(500);
+        });
+
+}
 
 
 
 module.exports = {
     getAllUsers,
-    getUser
+    getUser,
+    deleteUser
 }
