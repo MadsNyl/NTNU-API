@@ -6,6 +6,7 @@ const refreshTokenRouter = require("./routes/refresh.route.js");
 const logoutRouter = require("./routes/logout.route.js");
 const siteRouter = require("./routes/site.route.js");
 const adminRouter = require("./routes/admin.route.js");
+const magazineRouter = require("./routes/magazine.route.js");
 const cookieParser = require("cookie-parser");
 const corsOptions = require("./config/corsOptions.js");
 const credentials = require("./middleware/credentials.js");
@@ -29,5 +30,6 @@ app.use("/api/v1/refresh", refreshTokenRouter);
 app.use("/api/v1/logout", logoutRouter);
 app.use("/api/v1/site", siteRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/magazine", magazineRouter);
 
 app.listen(8080);
