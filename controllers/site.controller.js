@@ -5,15 +5,30 @@ const getSiteInfo = async (req, res) => {
     const site = req.query.title;
     const user = req.query.user;
 
+    let result = {};
+
     await pool.query(`SELECT site.* FROM user_site INNER JOIN site ON user_site.site_title = '${site}' GROUP BY site.title, user_site.user_id HAVING site.title = '${site}' AND user_site.user_id = ${user}`)
         .then(data => {
-            if (data[0].length > 0) return res.send(data[0]);
+            if (data[0].length > 0) return result.site = data[0];
             return res.status(404).json({ "message": "No site is registered for this user." })
         })
         .catch(error => {
             console.log(error);
             return res.status(500).json({ "message": error.message });
         });
+
+    if (result) {
+        await pool.query(`SELECT * FROM magazine WHERE site_title = '${site}'`)
+            .then(data => {
+                if (data[0].length > 0) result.magazines = data[0];
+                else result.magazines = [];
+                res.send(result);
+            })
+            .catch(error => {
+                console.log(error);
+                return res.sendStatus(500);
+            })
+    }
 }
 
 // get all sites for admin
