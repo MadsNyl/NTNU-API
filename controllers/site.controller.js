@@ -2,10 +2,10 @@ const { pool } = require("../connection.js");
 
 // get an editors site
 const getSiteInfo = async (req, res) => {
-    const site = req.params;
-    console.log(site);
+    const site = req.query.title;
+    const user = req.query.user;
 
-    await pool.query(`SELECT * FROM user_site INNER JOIN users ON user_site.user_id = ${req.user_id} INNER JOIN site ON user_site.site_title = '${site}'`)
+    await pool.query(`SELECT site.* FROM user_site INNER JOIN site ON user_site.site_title = '${site}' GROUP BY site.title, user_site.user_id HAVING site.title = '${site}' AND user_site.user_id = ${user}`)
         .then(data => {
             if (data[0].length > 0) return res.send(data[0]);
             return res.status(404).json({ "message": "No site is registered for this user." })

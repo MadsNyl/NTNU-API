@@ -10,14 +10,15 @@ const handleRefreshToken = async (req, res) => {
     const refreshToken = cookies.jwt;
 
     let foundUser = false;
-    let username, role;
+    let username, role, id;
 
-    await pool.query(`SELECT username, role FROM users WHERE refresh_token = '${refreshToken}'`)
+    await pool.query(`SELECT username, role, id FROM users WHERE refresh_token = '${refreshToken}'`)
         .then(data => {
             if (data[0].length > 0) {
                 foundUser = true;
                 username = data[0][0].username;
                 role = data[0][0].role
+                id = data[0][0].id;
             }
         })
         .catch(error => {
@@ -43,7 +44,7 @@ const handleRefreshToken = async (req, res) => {
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "10m" }
             );
-            return res.json({ role, accessToken });
+            return res.json({ role, accessToken, username, id });
         }
     );
 }

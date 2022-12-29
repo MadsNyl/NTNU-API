@@ -9,14 +9,15 @@ const handleLogin = async (req, res) => {
     if (!username || !password) return res.status(400).json({ "message": "Username and password are required." });
 
     let foundUser = false;
-    let pwd, match, role;
+    let pwd, match, role, id;
 
-    await pool.query(`SELECT username, password, role FROM users WHERE username = '${username}'`)
+    await pool.query(`SELECT id, username, password, role FROM users WHERE username = '${username}'`)
         .then(data => {
             if (data[0].length > 0) {
                 foundUser = true;
                 pwd = data[0][0].password;
                 role = data[0][0].role;
+                id = data[0][0].id;
             }
         })
         .catch(error => {
@@ -53,7 +54,7 @@ const handleLogin = async (req, res) => {
         await pool.query(`UPDATE users SET refresh_token = '${refreshToken}' WHERE username = '${username}'`)
             .then(data => {
                 res.cookie("jwt", refreshToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, siteName: "None", secure: true });
-                return res.status(200).json({ accessToken, role });
+                return res.status(200).json({ accessToken, role, id, username });
             })
             .catch(error => {
                 console.log(error);

@@ -61,7 +61,7 @@ const deleteUser = async (req, res) => {
     // delete user connection with site
     await pool.query(`DELETE FROM user_site WHERE user_site.user_id = ${req.body.user_id}`)
         .then(data => {
-            return
+            return;
         })
         .catch(error => {
             console.log(error);
