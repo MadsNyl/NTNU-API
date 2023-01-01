@@ -1,5 +1,6 @@
 CREATE TABLE magazine(
     id int AUTO_INCREMENT,
+    issue int DEFAULT null,
     title varchar(255),
     size int DEFAULT null,
     logo varchar(255) DEFAULT null,
