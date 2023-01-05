@@ -50,11 +50,11 @@ const createSite = async (req, res) => {
 
     await pool.query(`INSERT INTO site (title, name) VALUES(?, ?)`, [title, name])
         .then(data => {
-            if (data) return res.status(200).json({ "message": "Site successfully created." });
+            if (data) return res.status(200);
         })
         .catch(error => {
             console.log(error);
-            return res.status(500).json({ "message": error.message });
+            return res.status(500);
         });
 
     await pool.query(`INSERT INTO user_site (user_id, site_title) VALUES (?, ?)`, [user_id, title])
@@ -63,13 +63,13 @@ const createSite = async (req, res) => {
         })
         .catch(error => {
             console.log(error);
-            return res.sendStatus(200);
+            return res.sendStatus(500);
         });
 }
 
 // connect site and user
 const connectSiteToUser = async (req, res) => {
-    const { user_id, site_title, editor_id } = req.body;
+    const { site_title, editor_id } = req.body;
 
     // connect editor to site
     await pool.query(`INSERT INTO user_site (user_id, site_title) VALUES(${editor_id}, '${site_title}')`)
@@ -80,11 +80,16 @@ const connectSiteToUser = async (req, res) => {
             console.log(error);
             return res.sendStatus(500);
         });
+}
 
-    // connect admin to site
-    await pool.query(`INSERT INTO user_site (user_id, site_title) VALUES(${user_id}, '${site_title}')`)
+// remove user from site
+const removeUserFromSite = async (req, res) => {
+    const { editor_id } = req.body;
+
+    // remove user from site
+    await pool.query(`DELETE FROM user_site WHERE user_id = ${editor_id}`)
         .then(data => {
-            if (data) return res.status(200).json({ "message": "Site successfully connected to admin." });
+            return res.sendStatus(200)
         })
         .catch(error => {
             console.log(error);
@@ -92,10 +97,55 @@ const connectSiteToUser = async (req, res) => {
         });
 }
 
+// delete site
+const deleteSite = async (req, res) => {
+    const { site } = req.body;
+    
+    let contains;
+
+    // check if site has any magazines
+    await pool.query(`SELECT title FROM magazine WHERE site_title = "${site}"`)
+        .then(data => {
+            if (data[0].length) return contains = true;
+            return contains = false;
+        })
+        .catch(error => {
+            console.log(error);
+            res.status(500);
+        });
+
+    
+    // do not delete if site contains magazines
+    if (contains) return res.sendStatus(503);
+
+    // delete site from user_site
+    await pool.query(`DELETE FROM user_site WHERE site_title = "${site}"`)
+        .then(() => {
+            return;
+        })
+        .catch(error => {
+            console.log(error);
+            return res.status(500);
+        });
+
+    // delete site
+    await pool.query(`DELETE FROM site WHERE title = "${site}"`)
+        .then(() => {
+            return res.sendStatus(200);
+        })
+        .catch(error => {
+            console.log(error);
+            return res.sendStatus(500);
+        });
+
+}
+
 
 module.exports = {
     getSiteInfo,
     getAll,
     createSite,
-    connectSiteToUser
+    connectSiteToUser,
+    removeUserFromSite,
+    deleteSite
 }

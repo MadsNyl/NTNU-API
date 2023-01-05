@@ -35,6 +35,7 @@ const getUser = async (req, res) => {
             user_data.site = data[0];
             return res.send(user_data);
         }
+        user_data.site = [];
         return res.send(user_data);
     })
     .catch(error => {
@@ -57,7 +58,7 @@ const deleteUser = async (req, res) => {
         })
         .catch(error => {
             console.log(error);
-            return res.sendStatus(500);
+            return res.send(500);
         });
     
     if (hit) {
@@ -68,7 +69,7 @@ const deleteUser = async (req, res) => {
         })
         .catch(error => {
             console.log(error);
-            return res.sendStatus(500);
+            return res.send(500);
         });
     }
     

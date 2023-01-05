@@ -11,6 +11,8 @@ router
     .get("/", verifyRole(ROLES.Editor, ROLES.Admin), siteController.getSiteInfo)
     .get("/all", verifyRole(ROLES.Admin), siteController.getAll)
     .post("/create", verifyRole(ROLES.Admin), siteController.createSite)
-    .post("/connect", verifyRole(ROLES.Admin), siteController.connectSiteToUser);
+    .post("/connect", verifyRole(ROLES.Admin), siteController.connectSiteToUser)
+    .delete("/remove", verifyRole(ROLES.Admin), siteController.removeUserFromSite)
+    .delete("/delete", verifyRole(ROLES.Admin), siteController.deleteSite);
 
 module.exports = router;

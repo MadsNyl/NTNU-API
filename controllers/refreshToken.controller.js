@@ -4,14 +4,11 @@ require("dotenv").config();
 
 const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-
     if (!cookies?.jwt) return res.sendStatus(401);
 
     const refreshToken = cookies.jwt;
-
     let foundUser = false;
     let username, role, id;
-
     await pool.query(`SELECT username, role, id FROM users WHERE refresh_token = '${refreshToken}'`)
         .then(data => {
             if (data[0].length > 0) {
